@@ -70,14 +70,9 @@ public class EntrepriseServiceImpl implements IEntrepriseService{
     }
 
     @Override
-    public Entreprise retrieveEntreprise(Long id) {
+    public Entreprise retrieveEntreprise(Long id) throws NullPointerException{
         l.info("in  retrieveEntreprise id = " + id);
-        Entreprise e = new Entreprise();
-        if (entrepriseRepository.findById(id).isPresent()){
-            e =  entrepriseRepository.findById(id).get();
-        }
-
-        l.info("Entreprise returned : " + e.toString());
+        Entreprise e = entrepriseRepository.findById(id).orElse(null);
         return e;
     }
 }

@@ -9,12 +9,12 @@ public class DataBaseConnection {
 
     static
     {
-        String url = "jdbc:mysql:// localhost:3306/org";
+        String url = "jdbc:mysql://localhost:3306/timesheet?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         String user = "root";
         String pass = "";
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = (Connection) DriverManager.getConnection(url, user, pass);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection(url, user, pass);
         }
         catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

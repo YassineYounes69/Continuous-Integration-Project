@@ -8,8 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import tn.esprit.spring.entities.Entreprise;
 import tn.esprit.spring.entities.User;
+import tn.esprit.spring.services.DataBaseConnection;
 import tn.esprit.spring.services.EntrepriseServiceImpl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -20,9 +25,20 @@ public class EntrepriseServiceImplTest {
     EntrepriseServiceImpl es;
 
     @Test
-    public void testRetrieveAllEntreprises(){
+    public void testRetrieveAllEntreprises() throws SQLException {
+        Connection con
+                = DataBaseConnection.getConnection();
+        Statement s = con.createStatement();
+        ResultSet r = s.executeQuery("SELECT COUNT(*) AS rowcount FROM Entreprise");
+        r.next();
+
+        int count = r.getInt("rowcount");
+        r.close();
+
+
         List<Entreprise> listEntreprises = es.retrieveAllEntreprises();
-        Assert.assertEquals(3, listEntreprises.size());
+        System.out.println(count);
+        Assert.assertEquals(count, listEntreprises.size());
     }
 
     @Test
@@ -33,7 +49,7 @@ public class EntrepriseServiceImplTest {
     }
 
     @Test
-    public void testModifyUser() {
+    public void testModifyEntreprise() {
         Entreprise e = new Entreprise("ESPRIT","SARL");
         Entreprise entrepriseUpdated = es.updateEntreprise(e);
         Assert.assertEquals(e.getName(),entrepriseUpdated.getName());
@@ -41,14 +57,19 @@ public class EntrepriseServiceImplTest {
 
     @Test
     public void testRetrieveEntreprise() {
-        Entreprise entrepriseRetrieved = es.retrieveEntreprise(1L);
-        Assert.assertEquals(1L, entrepriseRetrieved.getId().longValue());
+        Entreprise entrepriseRetrieved = es.retrieveEntreprise(128L);
+        Assert.assertEquals(128L, entrepriseRetrieved.getId().longValue());
     }
 
     @Test
-    public void testDeleteEntreprise() {
-        es.deleteEntreprise(3L);
-        Assert.assertNull(es.retrieveEntreprise(3L));
+    public void testDeleteEntreprise() throws SQLException {
+        Connection con
+                = DataBaseConnection.getConnection();
+        Statement s = con.createStatement();
+        ResultSet r = s.executeQuery("SELECT * FROM entreprise ORDER BY id DESC LIMIT 1");
+        r.next();
+        Long id = r.getLong("id");
+        es.deleteEntreprise(id);
+        Assert.assertNull(es.retrieveEntreprise(id));
     }
-
 }
