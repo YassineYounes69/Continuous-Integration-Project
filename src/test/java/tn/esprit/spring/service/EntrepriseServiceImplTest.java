@@ -57,8 +57,14 @@ public class EntrepriseServiceImplTest {
 
     @Test
     public void testRetrieveEntreprise() {
-        Entreprise entrepriseRetrieved = es.retrieveEntreprise(128L);
-        Assert.assertEquals(128L, entrepriseRetrieved.getId().longValue());
+        Connection con
+                = DataBaseConnection.getConnection();
+        Statement s = con.createStatement();
+        ResultSet r = s.executeQuery("SELECT * FROM entreprise ORDER BY id DESC LIMIT 1");
+        r.next();
+        Long id = r.getLong("id");
+        Entreprise entrepriseRetrieved = es.retrieveEntreprise(id);
+        Assert.assertEquals(id, entrepriseRetrieved.getId().longValue());
     }
 
     @Test
