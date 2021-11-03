@@ -56,7 +56,7 @@ public class EntrepriseServiceImplTest {
     }
 
     @Test
-    public void testRetrieveEntreprise() {
+    public void testRetrieveEntreprise() throws SQLException {
         Connection con
                 = DataBaseConnection.getConnection();
         Statement s = con.createStatement();
@@ -64,7 +64,7 @@ public class EntrepriseServiceImplTest {
         r.next();
         Long id = r.getLong("id");
         Entreprise entrepriseRetrieved = es.retrieveEntreprise(id);
-        Assert.assertEquals(id, entrepriseRetrieved.getId().longValue());
+        Assert.assertEquals(id, entrepriseRetrieved.getId());
     }
 
     @Test
