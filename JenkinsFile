@@ -1,0 +1,39 @@
+pipeline {
+
+    agent any
+
+
+    stages {
+        stage("Build") {
+            steps {
+                bat "mvn compile"
+                bat "mvn test"
+                bat "mvn clean package"
+            }
+        }
+
+        stage("Sonar") {
+            steps {
+                bat "mvn clean verify sonar:sonar -Dsonar.projectKey=Continuous-Integration -Dsonar.host.url=http://localhost:9000 -Dsonar.login=170cb21a2ec95fad803ffd143e6852165f01e280
+"
+            }
+        }
+
+
+        stage("DEPLOY") {
+            steps {
+                bat "mvn clean package deploy:deploy-file -DgroupId=tn.esprit.spring -DartifactId=timesheet-ci -Dversion=1.0 -DgeneratePom=true -Dpackaging=jar  -DrepositoryId=deploymentRepo -Durl=http://localhost:8081/repository/maven-releases/ -Dfile=target/timesheet-ci-1.0.jar
+"
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            mail bcc: '',
+            body: '''Pipeline triggered notification via jenkins mail ''', cc: '', from: '', replyTo: '', subject: 'Build successfull', to: 'yassine.younes@esprit.tn'
+        }
+    }
+
+}
